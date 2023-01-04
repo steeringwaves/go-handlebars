@@ -1,6 +1,11 @@
 # Changelog
 
+### Handlebars 4.0.0 _(July 14, 2021)_
+
+- Hard Fork from [handlebars](https://github.com/flowchartsman/handlebars)
+
 ### Handlebars 3.0.0 _(July 14, 2021)_
+
 - Hard Fork from Raymond. Rebrand "handlebars"
 - Start with major version number 3 tracking supported version of Handlebars.js
 
