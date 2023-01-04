@@ -9,6 +9,7 @@ Handlebars for [golang](https://golang.org) with the same features as [handlebar
 
 # Table of Contents
 
+- [New Features](#new-features)
 - [Quick Start](#quick-start)
 - [Correct Usage](#correct-usage)
 - [Context](#context)
@@ -53,6 +54,9 @@ Handlebars for [golang](https://golang.org) with the same features as [handlebar
 - [References](#references)
 - [Others Implementations](#others-implementations)
 
+## New Features
+
+TODO document `handlebars.NewTemplater()`
 
 ## Quick Start
 
