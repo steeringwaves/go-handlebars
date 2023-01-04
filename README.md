@@ -2,7 +2,7 @@
 ![workflow](https://github.com/steeringwaves/go-handlebars/actions/workflows/test.yml/badge.svg)
 [![Go Reference](https://pkg.go.dev/badge/github.com/steeringwaves/go-handlebars.svg)](https://pkg.go.dev/github.com/steeringwaves/go-handlebars)
 
-Handlebars for [golang](https://golang.org) with the same features as [handlebars.js](http://handlebarsjs.com). Hard fork of [handlebars](https://github.com/flowchartsman/handlebars) which was a fork of [Raymond](https://github.com/aymerick/raymond) to modularize and keep up with handlebars development.
+Handlebars for [golang](https://golang.org) with the same features as [handlebars.js](http://handlebarsjs.com). Hard fork of [handlebars](https://github.com/flowchartsman/handlebars) which was a fork of [Raymond](https://github.com/aymerick/raymond) to modularize and keep up with handlebars development. This version is incompatible with the previous projects (no more global storage to allow more flexibility in deployment), you must use `handlebars.New()` to get a handlebars instance.
 
 ![Handlebars Logo](https://github.com/steeringwaves/go-handlebars/blob/master/handlebars-gopher.png?raw=true "Handlebars")
 
