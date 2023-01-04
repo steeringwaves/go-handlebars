@@ -5,13 +5,12 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/flowchartsman/handlebars/v3"
+	"github.com/steeringwaves/go-handlebars"
 )
 
-//
 // Those tests come from:
-//   https://github.com/wycats/handlebars.js/blob/master/spec/basic.js
 //
+//	https://github.com/wycats/handlebars.js/blob/master/spec/basic.js
 var basicTests = []Test{
 	{
 		"most basic",
@@ -631,9 +630,10 @@ func TestBasicErrors(t *testing.T) {
 	}
 
 	expectedError := regexp.QuoteMeta("Invalid path: text/this")
+	h := handlebars.New()
 
 	for _, input := range inputs {
-		_, err = handlebars.Parse(input)
+		_, err = h.Parse(input)
 		if err == nil {
 			t.Errorf("Test failed - Error expected")
 		}
