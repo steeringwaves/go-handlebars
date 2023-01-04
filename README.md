@@ -1,7 +1,8 @@
 # handlebars
+![workflow](https://github.com/steeringwaves/go-handlebars/actions/workflows/test.yml/badge.svg)
 [![Go Reference](https://pkg.go.dev/badge/github.com/steeringwaves/go-handlebars.svg)](https://pkg.go.dev/github.com/steeringwaves/go-handlebars)
 
-Handlebars for [golang](https://golang.org) with the same features as [handlebars.js](http://handlebarsjs.com) `3.0`. Hard fork of [Raymond](https://github.com/aymerick/raymond) to modularize and keep up with handlebars development.
+Handlebars for [golang](https://golang.org) with the same features as [handlebars.js](http://handlebarsjs.com). Hard fork of [handlebars](https://github.com/flowchartsman/handlebars) which was a fork of [Raymond](https://github.com/aymerick/raymond) to modularize and keep up with handlebars development.
 
 ![Handlebars Logo](https://github.com/steeringwaves/go-handlebars/blob/master/handlebars-gopher.png?raw=true "Handlebars")
 
@@ -82,7 +83,8 @@ func main() {
         "body":  "This is my first post!",
     }
 
-    result, err := handlebars.Render(tpl, ctx)
+    h := handlebars.New()
+    result, err := h.Render(tpl, ctx)
     if err != nil {
         panic("Please report a bug :)")
     }
@@ -139,7 +141,8 @@ func main() {
     }
 
     // parse template
-    tpl, err := handlebars.Parse(source)
+    h := handlebars.New()
+    tpl, err := h.Parse(source)
     if err != nil {
         panic(err)
     }
@@ -177,8 +180,11 @@ Displays:
 You can use `MustParse()` and `MustExec()` functions if you don't want to deal with errors:
 
 ```go
+// new handlebars instance
+h := handlebars.New()
+
 // parse template
-tpl := handlebars.MustParse(source)
+tpl := h.MustParse(source)
 
 // render template
 result := tpl.MustExec(ctx)
@@ -242,7 +248,8 @@ func main() {
         },
     }
 
-    output := handlebars.MustRender(source, ctx)
+    h := handlebars.New()
+    output := h.MustRender(source, ctx)
 
     fmt.Print(output)
 }
@@ -280,7 +287,8 @@ ctx := map[string]string{
     "body":  "<p>This is a post about &lt;p&gt; tags</p>",
 }
 
-tpl := handlebars.MustParse(source)
+h := handlebars.New()
+tpl := h.MustParse(source)
 result := tpl.MustExec(ctx)
 
 fmt.Print(result)
@@ -300,11 +308,13 @@ Output:
 When returning HTML from a helper, you should return a `SafeString` if you don't want it to be escaped by default. When using `SafeString` all unknown or unsafe data should be manually escaped with the `Escape` method.
 
 ```go
-handlebars.RegisterHelper("link", func(url, text string) handlebars.SafeString {
+h := handlebars.New()
+
+h.RegisterHelper("link", func(url, text string) handlebars.SafeString {
     return handlebars.SafeString("<a href='" + handlebars.Escape(url) + "'>" + handlebars.Escape(text) + "</a>")
 })
 
-tpl := handlebars.MustParse("{{link url text}}")
+tpl := h.MustParse("{{link url text}}")
 
 ctx := map[string]string{
     "url":  "http://www.aymerick.com/",
@@ -354,7 +364,8 @@ ctx := map[string]interface{}{
     }},
 }
 
-handlebars.RegisterHelper("fullName", func(person map[string]string) string {
+h := handlebars.New()
+h.RegisterHelper("fullName", func(person map[string]string) string {
     return person["firstName"] + " " + person["lastName"]
 })
 ```
@@ -421,7 +432,8 @@ ctx := Post{
     },
 }
 
-handlebars.RegisterHelper("fullName", func(person Person) string {
+h := handlebars.New()
+h.RegisterHelper("fullName", func(person Person) string {
     return person.FirstName + " " + person.LastName
 })
 ```
@@ -429,11 +441,11 @@ handlebars.RegisterHelper("fullName", func(person Person) string {
 You can unregister global helpers with `RemoveHelper` and `RemoveAllHelpers` functions:
 
 ```go
-handlebars.RemoveHelper("fullname")
+h.RemoveHelper("fullname")
 ```
 
 ```go
-handlebars.RemoveAllHelpers()
+h.RemoveAllHelpers()
 ```
 
 
@@ -442,7 +454,8 @@ handlebars.RemoveAllHelpers()
 You can register a helper on a specific template, and in that case that helper will be available to that template only:
 
 ```go
-tpl := handlebars.MustParse("User: {{fullName user.firstName user.lastName}}")
+h := handlebars.New()
+tpl := h.MustParse("User: {{fullName user.firstName user.lastName}}")
 
 tpl.RegisterHelper("fullName", func(firstName, lastName string) string {
   return firstName + " " + lastName
@@ -708,7 +721,8 @@ As an example, let's define a block helper that adds some markup to the wrapped 
 The `bold` helper will add markup to make its text bold.
 
 ```go
-handlebars.RegisterHelper("bold", func(options *handlebars.Options) handlebars.SafeString {
+h := handlebars.New()
+h.RegisterHelper("bold", func(options *handlebars.Options) handlebars.SafeString {
     return handlebars.SafeString(`<div class="mybold">` + options.Fn() + "</div>")
 })
 ```
@@ -718,7 +732,8 @@ A helper evaluates the block content with current context by calling `options.Fn
 If you want to evaluate the block with another context, then use `options.FnWith(ctx)`, like this french version of built-in `with` block helper:
 
 ```go
-handlebars.RegisterHelper("avec", func(context interface{}, options *handlebars.Options) string {
+h := handlebars.New()
+h.RegisterHelper("avec", func(context interface{}, options *handlebars.Options) string {
     return options.FnWith(context)
 })
 ```
@@ -739,7 +754,8 @@ source := `{{#si yep}}YEP !{{/si}}`
 
 ctx := map[string]interface{}{"yep": true}
 
-handlebars.RegisterHelper("si", func(conditional bool, options *handlebars.Options) string {
+h := handlebars.New()
+h.RegisterHelper("si", func(conditional bool, options *handlebars.Options) string {
     if conditional {
         return options.Fn()
     }
@@ -765,7 +781,8 @@ source := `{{#si yep}}YEP !{{else}}NOP !{{/si}}`
 
 ctx := map[string]interface{}{"yep": false}
 
-handlebars.RegisterHelper("si", func(conditional bool, options *handlebars.Options) string {
+h := handlebars.New()
+h.RegisterHelper("si", func(conditional bool, options *handlebars.Options) string {
     if conditional {
         return options.Fn()
     }
@@ -881,7 +898,8 @@ So this template:
 With this helper:
 
 ```go
-handlebars.RegisterHelper("add", func(val1, val2 int) string {
+h := handlebars.New()
+h.RegisterHelper("add", func(val1, val2 int) string {
     return strconv.Itoa(val1 + val2)
 })
 ```
@@ -901,7 +919,8 @@ ctx := map[string]interface{}{
     "b": "Valjean",
 }
 
-handlebars.RegisterHelper("concat", func(val1, val2 string) string {
+h := handlebars.New()
+h.RegisterHelper("concat", func(val1, val2 string) string {
     return val1 + " " + val2
 })
 ```
@@ -935,7 +954,8 @@ Note that this kind of automatic conversion is done with `bool` type too, thanks
 If a helper needs the `Options` argument, just add it at the end of helper parameters:
 
 ```go
-handlebars.RegisterHelper("add", func(val1, val2 int, options *handlebars.Options) string {
+h := handlebars.New()
+h.RegisterHelper("add", func(val1, val2 int, options *handlebars.Options) string {
     return strconv.Itoa(val1 + val2) + " " + options.ValueStr("bananas")
 })
 ```
@@ -962,7 +982,8 @@ ctx := map[string]interface{}{
     "suffix": "FOREVER !",
 }
 
-handlebars.RegisterHelper("concat", func(val1, val2 string, options *handlebars.Options) string {
+h := handlebars.New()
+h.RegisterHelper("concat", func(val1, val2 string, options *handlebars.Options) string {
     return val1 + " " + val2 + " " + options.ValueStr("suffix")
 })
 ```
@@ -993,7 +1014,8 @@ ctx := map[string]interface{}{
     "suffix": "FOREVER !",
 }
 
-handlebars.RegisterHelper("concat", func(suffix string, options *handlebars.Options) string {
+h := handlebars.New()
+h.RegisterHelper("concat", func(suffix string, options *handlebars.Options) string {
     return options.HashStr("first") + " " + options.HashStr("second") + " " + suffix
 })
 ```
@@ -1026,7 +1048,8 @@ ctx := map[string]interface{}{
     "a": "awesome",
 }
 
-handlebars.RegisterHelper("voodoo", func(options *handlebars.Options) string {
+h := handlebars.New()
+h.RegisterHelper("voodoo", func(options *handlebars.Options) string {
     // create data frame with @magix data
     frame := options.NewDataFrame()
     frame.Set("magix", options.HashProp("kind"))
@@ -1125,7 +1148,8 @@ Those context functions behave like helper functions: they can be called with pa
 You can register template partials before execution:
 
 ```go
-tpl := handlebars.MustParse("{{> foo}} baz")
+h := handlebars.New()
+tpl := h.MustParse("{{> foo}} baz")
 tpl.RegisterPartial("foo", "<span>bar</span>")
 
 result := tpl.MustExec(nil)
@@ -1141,7 +1165,8 @@ Output:
 You can register several partials at once:
 
 ```go
-tpl := handlebars.MustParse("{{> foo}} and {{> baz}}")
+h := handlebars.New()
+tpl := h.MustParse("{{> foo}} and {{> baz}}")
 tpl.RegisterPartials(map[string]string{
     "foo": "<span>bar</span>",
     "baz": "<span>bat</span>",
@@ -1163,9 +1188,10 @@ Output:
 You can registers global partials that will be accessible by all templates:
 
 ```go
-handlebars.RegisterPartial("foo", "<span>bar</span>")
+h := handlebars.New()
+h.RegisterPartial("foo", "<span>bar</span>")
 
-tpl := handlebars.MustParse("{{> foo}} baz")
+tpl := h.MustParse("{{> foo}} baz")
 result := tpl.MustExec(nil)
 fmt.Print(result)
 ```
@@ -1173,12 +1199,13 @@ fmt.Print(result)
 Or:
 
 ```go
-handlebars.RegisterPartials(map[string]string{
+h := handlebars.New()
+h.RegisterPartials(map[string]string{
     "foo": "<span>bar</span>",
     "baz": "<span>bat</span>",
 })
 
-tpl := handlebars.MustParse("{{> foo}} and {{> baz}}")
+tpl := h.MustParse("{{> foo}} and {{> baz}}")
 result := tpl.MustExec(nil)
 fmt.Print(result)
 ```
@@ -1191,7 +1218,8 @@ It's possible to dynamically select the partial to be executed by using sub expr
 For example, that template randomly evaluates the `foo` or `baz` partial:
 
 ```go
-tpl := handlebars.MustParse("{{> (whichPartial) }}")
+h := handlebars.New()
+tpl := h.MustParse("{{> (whichPartial) }}")
 tpl.RegisterPartials(map[string]string{
     "foo": "<span>bar</span>",
     "baz": "<span>bat</span>",
@@ -1218,7 +1246,8 @@ It's possible to execute partials on a custom context by passing in the context 
 For example:
 
 ```go
-tpl := handlebars.MustParse("User: {{> userDetails user }}")
+h := handlebars.New()
+tpl := h.MustParse("User: {{> userDetails user }}")
 tpl.RegisterPartial("userDetails", "{{firstname}} {{lastname}}")
 
 ctx := map[string]interface{}{
@@ -1246,7 +1275,8 @@ Custom data can be passed to partials through hash parameters.
 For example:
 
 ```go
-tpl := handlebars.MustParse("{{> myPartial name=hero }}")
+h := handlebars.New()
+tpl := h.MustParse("{{> myPartial name=hero }}")
 tpl.RegisterPartial("myPartial", "My hero is {{name}}")
 
 ctx := map[string]interface{}{
