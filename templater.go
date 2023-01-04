@@ -15,6 +15,7 @@ type Templater struct {
 	templates   map[string]*Template
 }
 
+// NewTemplater creates a new Templater instance
 func NewTemplater() *Templater {
 	return &Templater{
 		handlebars: New(),
@@ -22,6 +23,7 @@ func NewTemplater() *Templater {
 	}
 }
 
+// LoadTemplates loads all files in a directory and parses them as handlebars templates
 func (t *Templater) LoadTemplates(dir string) error {
 	t.templatesMu.Lock()
 	defer t.templatesMu.Unlock()
@@ -47,6 +49,7 @@ func (t *Templater) LoadTemplates(dir string) error {
 	return nil
 }
 
+// LoadPartials loads all files in a directory and parses them as handlebars partials
 func (t *Templater) LoadPartials(dir string) error {
 	files, err := find.Find(dir, find.Options{
 		RegularFilesOnly: true,
@@ -68,6 +71,7 @@ func (t *Templater) LoadPartials(dir string) error {
 	return nil
 }
 
+// Get returns the previously loaded template from the map
 func (t *Templater) Get(name string) (*Template, bool) {
 	t.templatesMu.Lock()
 	defer t.templatesMu.Unlock()
